@@ -358,47 +358,43 @@ void searchQueue(Node* root, int y, Queue& q) {
 void pathFromNodeAToB(Node* root, int x, int y) {
 	Stack s; init(s);
 	Queue q; init(q);
-	if (x > root->value && y > root->value) {
-		
+        while(x > root->value && y > root->value || x < root-> value && y < root->value){
+            if(x > root->value && y > root->value)
+                root= root->right;
+            else 
+		root=root->left;
+        }
+	searchStack(root, x, s);
+	searchQueue(root, y, q);
+	/*while (!isEmpty(s)) {
+		int step1 = pop(s);
+		int step2 = pop(s);
+		cout << "(" << step1 << ", " << step2 << ")" << endl;
+		push(s, step2);
+		if (s.top == 0)
+			break;
 	}
-	else if (x < root->value && y < root->value) {
-
+	Queue tmp; init(tmp); int temp;
+	int step1 = deQueue(q);
+	int step2 = deQueue(q);
+	do {
+		cout << "(" << step1 << ", " << step2 << ")" << endl;
+		enQueue(tmp, step2);
+		step1 = deQueue(tmp);
+		step2 = deQueue(q);
+	} while (q.front <= q.rear + 1);*/
+	while (!isEmpty(s)) {
+		cout << pop(s) << "->";
+		if (s.top == 0)
+			break;
 	}
-	else {
-
-		searchStack(root, x, s);
-		searchQueue(root, y, q);
-		/*while (!isEmpty(s)) {
-			int step1 = pop(s);
-			int step2 = pop(s);
-			cout << "(" << step1 << ", " << step2 << ")" << endl;
-			push(s, step2);
-			if (s.top == 0)
-				break;
-		}
-		Queue tmp; init(tmp); int temp;
-		int step1 = deQueue(q);
-		int step2 = deQueue(q);
-		do {
-			cout << "(" << step1 << ", " << step2 << ")" << endl;
-			enQueue(tmp, step2);
-			step1 = deQueue(tmp);
-			step2 = deQueue(q);
-		} while (q.front <= q.rear + 1);*/
-		while (!isEmpty(s)) {
-			cout << pop(s) << "->";
-			if (s.top == 0)
-				break;
-		}
-		while (q.front <= q.rear) {
-			cout << deQueue(q);
-			if (q.front <= q.rear)
-				cout << "->";
-			else
-				break;
-		}
+	while (q.front <= q.rear) {
+		cout << deQueue(q);
+		if (q.front <= q.rear)
+			cout << "->";
+		else
+			break;
 	}
-
 }
 //NO UNDERSTADNDING???
 int sum(Node* root) {
@@ -480,7 +476,7 @@ int main()
 	addNode(root, 47);
 	addNode(root, 60);
 	addNode(root, 45);
-	pathFromNodeAToB(root, 60, 45);
+	pathFromNodeAToB(root, 5, 21);
 	//nlr(root);
 	//cout << endl;
 	//inorderStack(root);
