@@ -3,24 +3,29 @@
 #include <stack>
 #define MAX 100
 using namespace std;
-
+template <typename T>
 struct Stack {
-	int a[MAX];
+	T a[MAX];
 	int top;
 };
-void init(Stack& s) {
+template <typename T>
+void init(Stack<T>& s) {
 	s.top = -1;
 }
-bool isEmpty(Stack s) {
+template <typename T>
+bool isEmpty(Stack<T> s) {
 	return s.top < 0;
 }
-bool isFull(Stack s) {
+template <typename T>
+bool isFull(Stack<T> s) {
 	return s.top == MAX;
 }
-void push(Stack& s, int x) {
+template <typename T>
+void push(Stack<T>& s, T x) {
 	s.a[++s.top] = x;
 }
-int pop(Stack& s) {
+template <typename T>
+T pop(Stack<T>& s) {
 	return s.a[s.top--];
 }
 struct Queue {
@@ -49,9 +54,6 @@ void enQueue(Queue& q, int x) {
 int deQueue(Queue& q) {
 	return q.a[q.front++];
 }
-
-
-
 struct Node
 {
 	int value;
@@ -80,29 +82,25 @@ void addNode(Node *&root, int x)
 	else
 	{
 		Node *p = root;
-		Node *parent = NULL;
-		while (p != NULL && p->value != x)
+		/*Node *parent = NULL;*/
+		while (p->value != x)
 		{
-			parent = p;
+			//parent = p;
 			if (x > p->value)
 			{
+				if (p->right == NULL) {
+					p->right = createNode(x);
+					break;
+				}
 				p = p->right;
 			}
 			else
 			{
+				if (p->left == NULL) {
+					p->left = createNode(x);
+					break;
+				}
 				p = p->left;
-			}
-		}
-		if (p == NULL)
-		{
-			p = createNode(x);
-			if (x > parent->value)
-			{
-				parent->right = p;
-			}
-			else
-			{
-				parent->left = p;
 			}
 		}
 	}
@@ -188,55 +186,38 @@ void delNode(Node *&root, int x)
 		{
 			if (parent != NULL)
 			{
-				// delete node la, node bac 0
-				if (p->left == NULL && p->right == NULL)
-				{
-					if (p->value > parent->value)
-					{
-						parent->right = NULL;
-					}
-					else
-						parent->left = NULL;
-				}
-				else if (p->value > parent->value)
-				{
-					// delete node bac 1
-					if (p->left == NULL)
-					{
-						parent->right = p->right;
-						p->right = NULL;
-					}
-					// delete node bac 1
-					else if (p->right == NULL)
-					{
-						parent->right = p->left;
-						p->left = NULL;
-					} // delete node bac 2
-					else
-					{
-						searchLeftFinal(p);
-					}
-				}
+				Node* tmp = NULL;
+				if (p->left == NULL)
+					tmp = p->right;
 				else
+					tmp = p->left;
+				if (p->value > parent->value)
 				{
-					// delete node bac 1
-					if (p->left == NULL)
-					{
-						parent->left = p->right;
-						p->right = NULL;
-					}
-					// delete node bac 1
-					else if (p->right == NULL)
-					{
-						parent->left = p->left;
-						p->left = NULL;
-					} // delete node bac 2
+					// delete node bac 2
+					if (p->left != NULL && p->right != NULL)
+						searchLeftFinal(p);
 					else
 					{
-						searchLeftFinal(p);
+						// delete node bac 1 va 0
+						parent->right = tmp;
+						delete p;
 					}
 				}
-				delete p;
+				else if(p->value < parent->value)
+				{
+					// delete node bac 2
+					if (p->left != NULL && p->right != NULL)
+						searchLeftFinal(p);
+					else
+					{
+						// delete node bac 1 va 0
+						parent->left = tmp;
+						delete p;
+					}
+				}
+				else{
+					searchLeftFinal(p);
+				}
 			}
 			else
 			{
@@ -323,7 +304,8 @@ void outputNode2Children(Node* root) {
 	outputNode2Children(root->left);
 	outputNode2Children(root->right);
 }
-void searchStack(Node* root, int x, Stack& s) {
+template <typename T>
+void searchStack(Node* root, int x, Stack<T>& s) {
 	Node* p = root;
 	while (p != NULL && p->value != x) {
 		if (x > p->value)
@@ -355,15 +337,16 @@ void searchQueue(Node* root, int y, Queue& q) {
 	if (p != NULL)
 		enQueue(q, y);
 }
+template <typename T>
 void pathFromNodeAToB(Node* root, int x, int y) {
-	Stack s; init(s);
+	Stack<int> s; init(s);
 	Queue q; init(q);
-        while(x > root->value && y > root->value || x < root-> value && y < root->value){
-            if(x > root->value && y > root->value)
-                root= root->right;
-            else 
-		root=root->left;
-        }
+	while (x > root->value && y > root->value || x < root->value && y < root->value) {
+		if (x > root->value && y > root->value)
+			root = root->right;
+		else
+			root = root->left;
+	}
 	searchStack(root, x, s);
 	searchQueue(root, y, q);
 	/*while (!isEmpty(s)) {
@@ -431,31 +414,118 @@ void lrn(Node *root)
 		cout << root->value << " ";
 	}
 }
-/*//void nlrStack(Node* root,Stack s) {
-//	init(s);
-//	Node* p = root;
-//
-//}
-//void inorderStack(Node* root) {
-//	if (root == nullptr) return;
-//
-//	stack<Node*> s;
-//	Node* current = root;
-//
-//	while (s.size() > 0 || current != nullptr) {
-//		if (current != nullptr) {
-//			s.push(current);
-//			current = current->left;
-//		}
-//		else {
-//			current = s.top();
-//			s.pop();
-//			cout << current->value << " ";
-//			current = current->right;
-//		}
-//	}
-//}*/
+void inorderStack(Node* root) {
+	if (root == nullptr) return;
 
+	stack<Node*> s;
+	Node* current = root;
+
+	while (s.size() > 0 || current != nullptr) {
+		if (current != nullptr) {
+			s.push(current);
+			current = current->left;
+		}
+		else {
+			current = s.top();
+			s.pop();
+			cout << current->value << " ";
+			current = current->right;
+		}
+	}
+}
+void lnrStack(Node* root) {
+	Stack<Node*> s;
+	init(s);
+	Node* p = root;
+	while (p != NULL || !isEmpty(s)) {
+		if (p != NULL) {
+			push(s, p);
+			p = p->left;
+		}
+		else {
+			p = pop(s);
+			cout << p->value << " ";
+			p = p->right;
+		}
+	}
+}
+//template <typename T>
+void nlrStack(Node* root) {
+	Stack<Node*> s;
+	init(s);
+	push(s, root);
+	while (!isEmpty(s)) {
+		Node* p = pop(s);
+		cout << p->value << " ";
+		if (p->right != NULL)
+			push(s, p->right);
+		if (p->left != NULL)
+			push(s, p->left);
+	}
+}
+void postorderTraversal(Node* root) {
+	if (root == nullptr) {
+		return;
+	}
+
+	queue<Node*> q;
+	stack<Node*> s;
+
+	while (root) {
+		q.push(root);
+		if (root->right) {
+			q.push(root->right);
+		}
+		root = root->left;
+	}
+
+	while (!q.empty()) {
+		Node* current = q.front();
+		q.pop();
+
+		s.push(current);
+	}
+
+	while (!s.empty()) {
+		Node* current = s.top();
+		s.pop();
+
+		cout << current->value << " ";
+	}
+}
+void lrnQueue(Node* root) {
+
+}
+void NLR(Node* root) {
+	if (root == nullptr) return;
+
+	stack<Node*> s;
+	s.push(root);
+
+	while (!s.empty()) {
+		Node* current = s.top();
+		s.pop();
+
+		cout << current->value << " ";
+
+		if (current->right != nullptr) {
+			s.push(current->right);
+		}
+
+		if (current->left != nullptr) {
+			s.push(current->left);
+		}
+	}
+}
+void deleteAllNodes(Node*& root) {
+	if (root == nullptr) return;
+
+	deleteAllNodes(root->left);
+	deleteAllNodes(root->right);
+
+	delete root;
+	root = nullptr;
+}
 int main()
 {
 	Node *root;
@@ -476,10 +546,21 @@ int main()
 	addNode(root, 47);
 	addNode(root, 60);
 	addNode(root, 45);
-	pathFromNodeAToB(root, 5, 21);
+	//addNode(root, 45);
+	//delNode(root, 40);
+	//lnr(root);
+	/*inorderStack(root);*/
+	//NLR(root);
+	//Stack<Node*> s;
+	//init(s);
+	//nlrStack(root);
+	//lnrStack(root);
+	//lrn(root);
+	postorderTraversal(root);
+	cout << endl;
+	//pathFromNodeAToB(root, 21, 25);
 	//nlr(root);
 	//cout << endl;
-	//inorderStack(root);
 	//cout << endl;
 	//cout << countNode(root) << endl;
 	/*addNodeRecursion(root, 40);
@@ -498,5 +579,9 @@ int main()
 	cout << tb << endl; */
 	/*cout << countNodeBac2(root) << endl;
 	outputNode2Children(root);*/
+	//lnr(root);
+	deleteAllNodes(root);
+	cout << "\n=========clear==========\n";
+	lnr(root);
 	return 0;
 }
