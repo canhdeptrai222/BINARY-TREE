@@ -1,6 +1,7 @@
 #include <iostream>
 #include <queue>
 #include <stack>
+#include <vector>
 #define MAX 100
 using namespace std;
 template <typename T>
@@ -291,6 +292,22 @@ int countNode(Node* root) {
 	    return countNode(root->left) + 1 + countNode(root->right);*/
     else return countNode(root->left) + countNode(root->right) + 1;
 }
+int countNodeLeaf(Node* root) {
+	if (root == NULL)
+		return 0;
+	if (root->left == NULL && root->right == NULL)
+		return 1;
+	return countNodeLeaf(root->left) + countNodeLeaf(root->right);
+}
+int countNodeBac1(Node* root) {
+	if (root == NULL)
+		return 0;
+	if (root->left != NULL && root->right == NULL)
+		return countNodeBac1(root->left) + 1;
+	if (root->left == NULL && root->right != NULL)
+		return countNodeBac1(root->right) + 1;
+	return countNodeBac1(root->left) + countNodeBac1(root->right);
+}
 int countNodeBac2(Node* root) {
 	if (root == NULL)
 		return 0;
@@ -513,24 +530,19 @@ void lrnUsing1Stack(Node* root) {
 		}
 	}
 }
-void NLR(Node* root) {
-	if (root == nullptr) return;
-
-	stack<Node*> s;
-	s.push(root);
-
-	while (!s.empty()) {
-		Node* current = s.top();
-		s.pop();
-
-		cout << current->value << " ";
-
-		if (current->right != nullptr) {
-			s.push(current->right);
+void BFS(Node* root) {
+	queue<Node*> q;
+	Node* cur = root;
+	q.push(cur);
+	while (!q.empty()) {
+		cur = q.front();
+		cout << cur->value << " ";
+		q.pop();
+		if (cur->left != NULL) {
+			q.push(cur->left);
 		}
-
-		if (current->left != nullptr) {
-			s.push(current->left);
+		if (cur->right != NULL) {
+			q.push(cur->right);
 		}
 	}
 }
@@ -542,6 +554,30 @@ void deleteAllNodes(Node*& root) {
 
 	delete root;
 	root = nullptr;
+}
+int max(int a, int b) {
+	if (a > b)
+		return a;
+	return b;
+}
+int heightTree(Node* root) {
+	if (root == NULL)
+		return 0;
+	int leftHeight = heightTree(root->left) +  1;
+	int rightHeight = heightTree(root->right) + 1;
+	return max(leftHeight, rightHeight);
+	//return max + 1;
+}
+void xuatNodeMucK(Node* root, int k) {
+	if (root == NULL)
+		return;
+	if (k == 0){
+		cout << root->value << " ";
+	}
+	else {
+		xuatNodeMucK(root->left, k - 1);
+		xuatNodeMucK(root->right, k - 1);
+	}
 }
 int main()
 {
@@ -563,8 +599,7 @@ int main()
 	addNode(root, 47);
 	addNode(root, 60);
 	addNode(root, 45);
-	lrnUsing2Stack(root);
-	lrnUsing1Stack(root);
+	xuatNodeMucK(root, 3);
 	
 	deleteAllNodes(root);
 	cout << "\n=========clear==========\n";
