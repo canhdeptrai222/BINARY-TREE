@@ -28,6 +28,10 @@ template <typename T>
 T pop(Stack<T>& s) {
 	return s.a[s.top--];
 }
+template <typename T>
+T geek(Stack<T> s) {
+	return s.a[s.top];
+}
 struct Queue {
 	int a[MAX];
 	int front;
@@ -337,7 +341,6 @@ void searchQueue(Node* root, int y, Queue& q) {
 	if (p != NULL)
 		enQueue(q, y);
 }
-template <typename T>
 void pathFromNodeAToB(Node* root, int x, int y) {
 	Stack<int> s; init(s);
 	Queue q; init(q);
@@ -367,9 +370,9 @@ void pathFromNodeAToB(Node* root, int x, int y) {
 		step2 = deQueue(q);
 	} while (q.front <= q.rear + 1);*/
 	while (!isEmpty(s)) {
-		cout << pop(s) << "->";
 		if (s.top == 0)
 			break;
+		cout << pop(s) << "->";
 	}
 	while (q.front <= q.rear) {
 		cout << deQueue(q);
@@ -463,38 +466,52 @@ void nlrStack(Node* root) {
 			push(s, p->left);
 	}
 }
-void postorderTraversal(Node* root) {
-	if (root == nullptr) {
-		return;
-	}
-
-	queue<Node*> q;
-	stack<Node*> s;
-
-	while (root) {
-		q.push(root);
-		if (root->right) {
-			q.push(root->right);
+void lrnUsing2Stack(Node* root) {
+	Stack<Node*> s1; init(s1);
+	Stack<Node*> s2; init(s2);
+	push(s1, root);
+	while (!isEmpty(s1)) {
+		Node* cur = pop(s1);
+		push(s2, cur);
+		if (cur->left != NULL) {
+			push(s1, cur->left);
 		}
-		root = root->left;
+		if (cur->right != NULL) {
+			push(s1, cur->right);
+		}
 	}
-
-	while (!q.empty()) {
-		Node* current = q.front();
-		q.pop();
-
-		s.push(current);
-	}
-
-	while (!s.empty()) {
-		Node* current = s.top();
-		s.pop();
-
-		cout << current->value << " ";
-	}
+	while (!isEmpty(s2))
+		cout << pop(s2)->value << " ";
+	cout << endl;
 }
-void lrnQueue(Node* root) {
-
+void lrnUsing1Stack(Node* root) {
+	Stack<Node*>s;
+	init(s);
+	Node* current = root;
+	while (true) {
+		if (current != NULL) {
+			push(s, current);
+			current = current->left;
+		}
+		else {
+			if (isEmpty(s))
+				break;
+			if (geek(s)->right == NULL) {
+				current = pop(s);
+				cout << current->value << " ";
+				while (current == geek(s)->right) {
+					cout << geek(s)->value << " ";
+					current = pop(s);
+					if(isEmpty(s))
+						break;
+				}
+			}
+			if (!isEmpty(s))
+				current = geek(s)->right;
+			else
+				current = NULL;
+		}
+	}
 }
 void NLR(Node* root) {
 	if (root == nullptr) return;
@@ -546,40 +563,9 @@ int main()
 	addNode(root, 47);
 	addNode(root, 60);
 	addNode(root, 45);
-	//addNode(root, 45);
-	//delNode(root, 40);
-	//lnr(root);
-	/*inorderStack(root);*/
-	//NLR(root);
-	//Stack<Node*> s;
-	//init(s);
-	//nlrStack(root);
-	//lnrStack(root);
-	//lrn(root);
-	postorderTraversal(root);
-	cout << endl;
-	//pathFromNodeAToB(root, 21, 25);
-	//nlr(root);
-	//cout << endl;
-	//cout << endl;
-	//cout << countNode(root) << endl;
-	/*addNodeRecursion(root, 40);
-	addNodeRecursion(root, 20);
-	addNodeRecursion(root, 50);*/
+	lrnUsing2Stack(root);
+	lrnUsing1Stack(root);
 	
-	//// cout << searchRecursion(root, 210)<< endl;
-	//cout << "=============DELETE============\n";
-	//delNodeRecursion(root, 40);
-	//lnr(root);
-	//cout << endl;
-	/*cout << "========MAX===========\n";
-	cout << nodeMax(root)->value << endl;*/
-	//cout << "===============AVERAGE===============\n"; //31
-	/*int tb = sum(root) / countNode(root);
-	cout << tb << endl; */
-	/*cout << countNodeBac2(root) << endl;
-	outputNode2Children(root);*/
-	//lnr(root);
 	deleteAllNodes(root);
 	cout << "\n=========clear==========\n";
 	lnr(root);
