@@ -168,6 +168,8 @@ void searchLeftFinal(Node *&p)
 			prev->left = tmp->right;
 			tmp->right = NULL;
 		}
+		else
+			p->right = tmp->right;
 		delete tmp;
 		return;
 	}
