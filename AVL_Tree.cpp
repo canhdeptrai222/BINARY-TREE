@@ -108,8 +108,11 @@ void leftNodeFinal(Node*& p, Node*& q) {
 		p = q;
 		q = q->right;
 	}
-	else
+	else{
 		leftNodeFinal(p, q->left);
+		if(q != NULL)
+			q->height = 1 + max(height(q->left), height(q->right));
+	}
 }
 void delNode(Node*& root, int x) {
 	if (root == NULL)
