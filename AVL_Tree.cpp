@@ -108,7 +108,7 @@ void leftNodeFinal(Node*& p, Node*& q) {
 		p = q;
 		q = q->right;
 	}
-	else{
+	else {
 		leftNodeFinal(p, q->left);
 		if(q != NULL)
 			q->height = 1 + max(height(q->left), height(q->right));
@@ -246,7 +246,7 @@ int main() {
 	delNode(root, 1);*/
 	//res = 8(4) 5(3) 10(3) 3(2) 7(2) 9(1) 11(2) 2(1) 4(1) 6(1) 12(1)
 	//case 6
-	addNode(root, 8);
+	/*addNode(root, 8);
 	addNode(root, 3);
 	addNode(root, 10);
 	addNode(root, 2);
@@ -258,9 +258,8 @@ int main() {
 	addNode(root, 6);
 	addNode(root, 11);
 	addNode(root, 7);
-	delNode(root, 10);
-	/*if (isBalanced(root))
-		cout << "1";*/
+	delNode(root, 10);*/
+	//res = 5(4) 3(3) 8(3) 2(2) 4(1) 6(2) 11(2) 1(1) 7(1) 9(1) 12(1)
 	BFS(root);
 	deleteALLNode(root);
 	BFS(root);
